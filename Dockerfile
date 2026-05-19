@@ -8,7 +8,7 @@ WORKDIR /app
 COPY jokenpo.py .
 
 # Instala o Flask
-RUN pip install flask
+RUN pip install --no-cache-dir flask pyodbc
 
 # Expõe a porta 80
 EXPOSE 80
