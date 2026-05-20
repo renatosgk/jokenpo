@@ -1,17 +1,24 @@
-# Use a imagem base do Python
 FROM python:3.9-slim
 
-# Define o diretório de trabalho
+# Instala dependências do sistema + ODBC Driver 17
+RUN apt-get update && apt-get install -y \
+    curl \
+    apt-transport-https \
+    gnupg2 \
+    unixodbc-dev \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql17 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copia o arquivo do jogo para o contêiner
 COPY jokenpo.py .
 
-# Instala o Flask
 RUN pip install --no-cache-dir flask pyodbc
 
-# Expõe a porta 80
 EXPOSE 80
 
-# Define o comando para rodar o aplicativo
 CMD ["python", "jokenpo.py"]
